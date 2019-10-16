@@ -35,6 +35,27 @@ class Mail extends \PleskX\Api\Operator
     }
 
     /**
+     * @param string $name
+     * @param integer $siteId
+     * @param string $password
+     * @return Struct\Info
+     */
+    public function updatePassword($name, $siteId, $password)
+    {
+        $packet = $this->_client->getPacket();
+        $info = $packet->addChild($this->_wrapperTag)->addChild('update')->addChild('set');
+
+        $filter = $info->addChild('filter');
+        $filter->addChild('site-id', $siteId);
+        $mailname = $filter->addChild('mailname');
+        $mailname->addChild('name', $name);
+        $mailname->addChild('password')->addChild('value', $password);
+
+        $response = $this->_client->request($packet);
+        return new Struct\Info($response->mailname);
+    }
+    
+    /**
      * @param string $field
      * @param integer|string $value
      * @param integer $siteId
